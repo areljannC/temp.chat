@@ -1,5 +1,5 @@
 {
-  "name": "chatroom-pwa",
+  "name": "chatroom-pwa-client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
