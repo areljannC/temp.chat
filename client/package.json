@@ -9,12 +9,12 @@
   },
   "dependencies": {
     "@zeit/next-sass": "^1.0.1",
+    "bulma": "^0.8.1",
     "next": "^9.3.4",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "socket.io-client": "^2.3.0",
-    "spectre.css": "^0.5.8",
     "styled-components": "^5.0.1"
   },
   "devDependencies": {
