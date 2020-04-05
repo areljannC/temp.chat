@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import socketIOClient from 'socket.io-client'
+import styled from 'styled-components'
 
 const Chat = () => {
   const [text, setText] = useState('')
@@ -11,10 +12,14 @@ const Chat = () => {
 
   return (
     <main>
-      <h1>Chat Page</h1>
+      <Heading>Chat Page</Heading>
       <p>{text}</p>
     </main>
   )
 }
+
+const Heading = styled.h1`
+  color: red;
+`
 
 export default Chat
