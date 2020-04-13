@@ -1,43 +1,74 @@
 const express = require('express')
 const server = express()
-const http = require('http').createServer(server)
-const io = require('socket.io')(http)
-const port = 4000
+const http = require('http')
 const cors = require('cors')
 const uuidv4 = require('uuid').v4
+const WebSocket = require('ws')
+
+const serverPort = 4001
+const webSocketPort = 4002
 
 // middleware
 server.use(cors())
 server.use(express.json())
 
-// set username endpoint
-server.post('/username', async (req, res) => {
-  const { username } = req.body
-  const uuid = uuidv4()
-  res.status(200).json({ username: `${username}-${uuid}` })
+// Express endpoints
+server.get('/', async (req, res) => {
+  res.status(200).json({ message: 'Hi' })
 })
 
-// create chatroom endpoint
-server.post('/chatroom', async (req, res) => {
-  const { chatroom } = req.body
-  const uuid = uuidv4()
-  res.status(200).json({ chatroom: `${chatroom}-${uuid}` })
-})
+// expose Express server
+server.listen(serverPort, () => console.log(`Listening at ${serverPort}`))
 
-io.on('connect', (socket) => {
-  let roomName = 'test'
-  socket.on('room', (room) => { 
-    console.log('user joined room: ' + room)
-    socket.join(roomName) 
-    socket.emit('message', ({ message: 'more messages' }))
+// setup WebSockets
+const wss = new WebSocket.Server({ port: webSocketPort })
+
+let chatrooms = new Map()
+
+wss.on('connection', (ws) => {
+  console.log('INFO: A user has connected.')
+  ws.send(
+    JSON.stringify({
+      type: 'NEW_MESSAGE',
+      data: {
+        message: 'Connected!',
+      },
+    })
+  )
+
+  ws.on('message', (event) => {
+    const { type, data } = JSON.parse(event)
+    let users, chatroom
+    switch (type) {
+      case 'CREATE_CHATROOM':
+        users = new Map()
+        users.set(data.username, ws)
+        chatrooms.set(data.chatroom, users)
+        break
+      case 'JOIN_CHATROOM':
+        chatroom = chatrooms.get(data.chatroom)
+        chatroom.set(data.username, ws)
+        break
+      case 'NEW_MESSAGE':
+        chatroom = chatrooms.get(data.chatroom)
+        chatroom.forEach((ws) => {
+          ws.send(
+            JSON.stringify({
+              type: 'NEW_MESSAGE',
+              data: {
+                message: data.message,
+              },
+            })
+          )
+        })
+        break
+      default:
+        break
+    }
+    // wss.clients.forEach((client) => {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     client.send(message)
+    //   }
+    // })
   })
-  socket.on('message', ({ message }) => { 
-    console.log(message, roomName)
-    // io.to(roomName).emit('message', ({ message }))
-    io.sockets.in(roomName).emit('message', ({ message }))
-  })
-})
-
-http.listen(port, () => {
-  console.log(`Listening on port ${port}.`)
 })
