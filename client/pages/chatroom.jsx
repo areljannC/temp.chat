@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react'
 import fetch from 'isomorphic-unfetch'
 import { useForm } from 'react-hook-form'
 import { Layout, Divider } from '../components'
-import { SERVER_PATH, WEB_SOCKET_PATH } from '../constants'
+import {
+  SERVER_PATH,
+  WEB_SOCKET_PATH,
+  CREATE_CHATROOM,
+  JOIN_CHATROOM,
+  NEW_MESSAGE,
+} from '../constants'
 
 const Chatroom = () => {
   const [username, setUsername] = useState(null)
@@ -13,13 +19,15 @@ const Chatroom = () => {
   const { register, handleSubmit, watch, errors, reset } = useForm()
 
   useEffect(() => {
-    if (!ws) { setWs(new WebSocket(WEB_SOCKET_PATH)) }
+    if (!ws) {
+      setWs(new WebSocket(WEB_SOCKET_PATH))
+    }
 
     if (ws) {
       ws.onmessage = (event) => {
         const { type, data } = JSON.parse(event.data)
         switch (type) {
-          case 'NEW_MESSAGE':
+          case NEW_MESSAGE:
             setMessages((prevMessages) => [...prevMessages, data.message])
             break
           default:
@@ -38,32 +46,38 @@ const Chatroom = () => {
   }
 
   const onSubmitCreateChatroom = async ({ createChatroom }) => {
-    ws.send(JSON.stringify({
-      type: 'CREATE_CHATROOM',
-      data: { 
-        username,
-        chatroom: createChatroom
-      }
-    }))
+    ws.send(
+      JSON.stringify({
+        type: CREATE_CHATROOM,
+        data: {
+          username,
+          chatroom: createChatroom,
+        },
+      })
+    )
     setChatroom(createChatroom)
   }
 
   const onSubmitJoinChatroom = async ({ joinChatroom }) => {
-    ws.send(JSON.stringify({
-      type: 'JOIN_CHATROOM',
-      data: { 
-        username,
-        chatroom: joinChatroom
-      }
-    }))
+    ws.send(
+      JSON.stringify({
+        type: JOIN_CHATROOM,
+        data: {
+          username,
+          chatroom: joinChatroom,
+        },
+      })
+    )
     setChatroom(joinChatroom)
   }
 
   const onSubmitMessage = async ({ message }, event) => {
-    ws.send(JSON.stringify({
-      type: 'NEW_MESSAGE',
-      data: { username, chatroom, message }
-    }))
+    ws.send(
+      JSON.stringify({
+        type: NEW_MESSAGE,
+        data: { username, chatroom, message },
+      })
+    )
     event.target.reset()
   }
 

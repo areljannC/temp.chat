@@ -1,0 +1,3 @@
+export const NEW_MESSAGE = 'NEW_MESSAGE'
+export const CREATE_CHATROOM = 'CREATE_CHATROOM'
+export const JOIN_CHATROOM = 'JOIN_CHATROOM'
