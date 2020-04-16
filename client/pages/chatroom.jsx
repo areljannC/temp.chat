@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import fetch from 'isomorphic-unfetch'
 import { useForm } from 'react-hook-form'
 import { Layout, Divider } from '../components'
@@ -139,8 +140,7 @@ const Chatroom = () => {
   )
 }
 
-export default Chatroom
-
+export default dynamic(() => Promise.resolve(Chatroom), { ssr: false })
 /*
   https://www.grapecity.com/blogs/moving-from-react-components-to-react-hooks
 */
