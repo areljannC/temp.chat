@@ -28,7 +28,7 @@ app.get('/uuid', async (req, res) => {
 
 // Setup http server
 const server = http.createServer(app)
-server.listen(port)
+server.listen(port, () => { console.log(`Listening on port ${port}`) })
 
 // setup WebSockets
 const wss = new WebSocketServer({ server })
