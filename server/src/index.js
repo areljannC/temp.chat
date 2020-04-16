@@ -1,33 +1,37 @@
 const express = require('express')
-const server = express()
+const app = express()
 const http = require('http')
 const cors = require('cors')
 const uuidv4 = require('uuid').v4
-const WebSocket = require('ws')
+const WebSocketServer = require('ws').Server
 const { NEW_MESSAGE, CREATE_CHATROOM, JOIN_CHATROOM, LEAVE_CHATROOM } = require('./constants')
+require('dotenv').config()
 
-const serverPort = 4001
-const webSocketPort = 4002
+const port = process.env.PORT || 4000
 
 // middleware
-server.use(cors())
-server.use(express.json())
+app.use(cors())
+app.use(express.json())
 
 // Express endpoints
-server.get('/', async (req, res) => {
+app.get('/', async (req, res) => {
   res.status(200).json({ message: 'Hi' })
 })
 
-server.get('/uuid', async (req, res) => {
+app.get('/uuid', async (req, res) => {
   const uuid = uuidv4()
   res.status(200).json({ uuid })
 })
 
 // expose Express server
-server.listen(serverPort, () => console.log(`Listening at ${serverPort}`))
+// express.listen(serverPort, () => console.log(`Listening at ${serverPort}`))
+
+// Setup http server
+const server = http.createServer(app)
+server.listen(port)
 
 // setup WebSockets
-const wss = new WebSocket.Server({ port: webSocketPort })
+const wss = new WebSocketServer({ server })
 
 let chatrooms = new Map()
 
