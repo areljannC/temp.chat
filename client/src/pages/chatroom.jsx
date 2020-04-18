@@ -21,6 +21,7 @@ const Chatroom = () => {
   const { chatroom } = useContext(ChatrooomContext)
   const [messages, setMessages] = useState([])
   const ws = useRef(null)
+  const chatContainerRef = useRef(null)
 
   useEffect(() => {
     if (!user && !chatroom) {
@@ -44,6 +45,8 @@ const Chatroom = () => {
         switch (type) {
           case NEW_MESSAGE:
             setMessages((prevMessages) => [...prevMessages, data])
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+            break
         }
       }
 
@@ -81,6 +84,8 @@ const Chatroom = () => {
                       padding: '1rem',
                       overflow: 'auto'
                     }}
+                    ref={chatContainerRef}
+                    id='chat'
                   >
                     {messages.map((sm, index) => (
                       <div
@@ -99,7 +104,7 @@ const Chatroom = () => {
                         <span
                           style={{
                             textAlign:
-                              user.id === sm.user.id ? 'right' : 'left',
+                              user?.id === sm.user.id ? 'right' : 'left',
                             margin: '0 1rem'
                           }}
                         >
