@@ -23,9 +23,6 @@ app.get('/uuid', async (req, res) => {
   res.status(200).json({ uuid })
 })
 
-// expose Express server
-// express.listen(serverPort, () => console.log(`Listening at ${serverPort}`))
-
 // Setup http server
 const server = http.createServer(app)
 server.listen(port, () => { console.log(`Listening on port ${port}`) })
@@ -36,6 +33,8 @@ const wss = new WebSocketServer({ server })
 let chatrooms = new Map()
 
 wss.on('connection', (ws, req, client) => {
+  console.log('INFO: A user has connected.')
+
   ws.on('message', (event) => {
     const { type, data } = JSON.parse(event)
     let users, chatroom

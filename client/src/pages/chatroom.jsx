@@ -16,47 +16,40 @@ import {
 
 const Chatroom = () => {
   const { register, handleSubmit, errors } = useForm()
+  const router = useRouter()
   const { user } = useContext(UserContext)
   const { chatroom } = useContext(ChatrooomContext)
   const [messages, setMessages] = useState([])
-  
+  const ws = useRef(null)
+
   useEffect(() => {
-    if (!user) {
+    if (!user && !chatroom) {
       router.push('/')
-    }
-  }, [user])
-  
-  const ws = useRef(new WebSocket(WEB_SOCKET_PATH))
+    } else {
+      ws.current = new WebSocket(WEB_SOCKET_PATH)
 
-  useEffect(() => {
-    if (!ws.current) {
-      router.push('/')
-    }
-  }, [ws])
-  
-
-  useEffect(() => {
-    ws.current.onopen = (event) => {
-      ws.current.send(JSON.stringify({
-        type: chatroom.type,
-        data: { user, chatroom }
-      }))
-    }
-
-    ws.current.onclose = (event) => {
-      console.log('Socket closed!')
-    }
-
-    ws.current.onmessage = (event) => {
-      const { type, data } = JSON.parse(event.data)
-      switch (type) {
-        case NEW_MESSAGE:
-          setMessages(prevMessages => [...prevMessages, data])
+      ws.current.onopen = (event) => {
+        ws.current.send(
+          JSON.stringify({
+            type: chatroom.type,
+            data: { user, chatroom }
+          })
+        )
       }
-    }
-  })
 
-  useEffect(() => () => ws.current.close(), [ws])
+      ws.current.onclose = (event) => {}
+
+      ws.current.onmessage = (event) => {
+        const { type, data } = JSON.parse(event.data)
+        switch (type) {
+          case NEW_MESSAGE:
+            setMessages((prevMessages) => [...prevMessages, data])
+        }
+      }
+
+      return () => ws.current.close()
+    }
+  }, [user, chatroom])
 
   const onSubmitMessage = async (data, event) => {
     const message = data.message.trim()
@@ -104,7 +97,11 @@ const Chatroom = () => {
                           <span>{sm.message}</span>
                         </div>
                         <span
-                          style={{ textAlign: user.id === sm.user.id ? 'right' : 'left', margin: '0 1rem' }}
+                          style={{
+                            textAlign:
+                              user.id === sm.user.id ? 'right' : 'left',
+                            margin: '0 1rem'
+                          }}
                         >
                           {sm.user.name}
                         </span>
@@ -143,4 +140,5 @@ const Chatroom = () => {
 export default dynamic(() => Promise.resolve(Chatroom), { ssr: false })
 /*
   https://www.grapecity.com/blogs/moving-from-react-components-to-react-hooks
+  https://stackoverflow.com/a/58433356
 */
