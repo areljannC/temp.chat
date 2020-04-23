@@ -6,24 +6,19 @@ import {
   UserContextProvider,
   ChatrooomContextProvider
 } from '../context'
-class CustomApp extends App {
-  componentDidMount() {
-    // Append class for Bulma's fixed top navbar.
-    document.querySelector('body').classList.add('has-navbar-fixed-top')
-  }
+import '../stylesheets/reset.scss'
 
+class CustomApp extends App {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <div>
-        <div>
-          <Head>
-            <link
-              href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed&display=swap'
-              rel='stylesheet'
-            />
-          </Head>
-        </div>
+      <>
+        <Head>
+          <link
+            href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed&display=swap'
+            rel='stylesheet'
+          />
+        </Head>
         <ThemeContextProvider>
           <UserContextProvider>
             <ChatrooomContextProvider>
@@ -31,7 +26,7 @@ class CustomApp extends App {
             </ChatrooomContextProvider>
           </UserContextProvider>
         </ThemeContextProvider>
-      </div>
+      </>
     )
   }
 }

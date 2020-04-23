@@ -1,14 +1,21 @@
-import React from 'react'
-import '../stylesheets/custom-bulma.scss'
-import Navbar from './Navbar'
+import React, { useContext } from 'react'
+import styled from 'styled-components'
+import { ThemeToggler } from '../components'
 
+// Component
 const Layout = ({ children }) => (
-  <div>
-    <Navbar />
-    <main>
-      {children}
-    </main>
-  </div>
+  <Container>
+    <main>{children}</main>
+    <ThemeToggler />
+  </Container>
 )
+
+// Styles
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.background};
+  position: relative;
+`
 
 export default Layout
