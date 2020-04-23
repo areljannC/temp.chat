@@ -74,7 +74,8 @@ wss.on('connection', (ws, req, client) => {
             type: NEW_MESSAGE,
             data: {
               user: data.user,
-              message: data.message
+              message: data.message,
+              sentTimestamp: data.sentTimestamp
             }
           }))
         })

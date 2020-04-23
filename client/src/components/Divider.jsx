@@ -5,7 +5,7 @@ const Divider = () => <Container />
 
 const Container = styled.div`
   width: 100%;
-  height: 2rem;
+  height: 1rem;
 `
 
 export default Divider

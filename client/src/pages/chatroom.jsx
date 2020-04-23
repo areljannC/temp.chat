@@ -3,20 +3,25 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import fetch from 'isomorphic-unfetch'
 import { useForm } from 'react-hook-form'
-import { Layout, Divider } from '../components'
-import { UserContext, ChatrooomContext } from '../context'
+import { Layout, Divider, MessageBubble } from '../components'
+import { ThemeContext, UserContext, ChatrooomContext } from '../context'
 import {
   SERVER_PATH,
   WEB_SOCKET_PATH,
   CREATE_CHATROOM,
   JOIN_CHATROOM,
   NEW_MESSAGE,
-  LEAVE_CHATROOM
+  LEAVE_CHATROOM,
+  DARK,
+  LIGHT
 } from '../constants'
+import { InlineIcon } from '@iconify/react'
+import sendIcon from '@iconify/icons-ion/send'
 
 const Chatroom = () => {
   const { register, handleSubmit, errors } = useForm()
   const router = useRouter()
+  const { theme } = useContext(ThemeContext)
   const { user } = useContext(UserContext)
   const { chatroom } = useContext(ChatrooomContext)
   const [messages, setMessages] = useState([])
@@ -61,7 +66,7 @@ const Chatroom = () => {
         ws.current.send(
           JSON.stringify({
             type: NEW_MESSAGE,
-            data: { user, chatroom, message }
+            data: { user, chatroom, message, sentTimestamp: new Date() }
           })
         )
       }
@@ -71,46 +76,42 @@ const Chatroom = () => {
 
   return (
     <Layout>
-      <section className='hero is-fullheight'>
+      <section
+        className={`hero is-fullheight-with-navbar ${
+          theme === DARK ? 'is-dark' : theme === LIGHT ? 'is-light' : null
+        }`}
+      >
         <div className='hero-body'>
           <div className='container'>
             <div className='columns is-centered'>
               <div className='column is-4'>
-                <div className='box'>
+                <div
+                  className={
+                    theme === DARK
+                      ? 'has-background-dark'
+                      : theme === LIGHT
+                      ? 'has-background-light'
+                      : null
+                  }
+                >
                   <div
                     style={{
                       width: '100%',
                       height: '500px',
                       padding: '1rem',
-                      overflow: 'auto'
+                      overflowY: 'scroll'
                     }}
                     ref={chatContainerRef}
                     id='chat'
                   >
                     {messages.map((sm, index) => (
-                      <div
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'flex-end',
-                          marginBottom: '1rem'
-                        }}
+                      <MessageBubble
                         key={index}
-                      >
-                        <div className='box' style={{ marginBottom: '0.5rem' }}>
-                          <span>{sm.message}</span>
-                        </div>
-                        <span
-                          style={{
-                            textAlign:
-                              user?.id === sm.user.id ? 'right' : 'left',
-                            margin: '0 1rem'
-                          }}
-                        >
-                          {sm.user.name}
-                        </span>
-                      </div>
+                        message={sm.message}
+                        name={user?.id === sm.user.id ? 'You' : sm.user.name}
+                        isReceived={!(user?.id === sm.user.id)}
+                        timestamp={new Date(sm.sentTimestamp)}
+                      />
                     ))}
                   </div>
                   <Divider />
@@ -126,8 +127,10 @@ const Chatroom = () => {
                         />
                       </div>
                       <div className='control'>
-                        <button className='button' type='submit'>
-                          👍
+                        <button className='button is-danger' type='submit'>
+                          <span className='icon has-text-light' >
+                            <InlineIcon icon={sendIcon} />
+                          </span>
                         </button>
                       </div>
                     </div>

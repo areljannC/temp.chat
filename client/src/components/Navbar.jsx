@@ -1,56 +1,82 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import { ThemeContext } from '../context'
+import { DARK, LIGHT } from '../constants'
+import { InlineIcon } from '@iconify/react'
+import crescentMoon from '@iconify/icons-emojione/crescent-moon'
+import sun from '@iconify/icons-emojione/sun'
 
-const Navbar = () => (
-  <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="https://bulma.io">
-        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
-      </a>
+const Navbar = () => {
+  const { theme, setTheme } = useContext(ThemeContext)
+  const [isActive, setIsActive] = useState(false)
 
-      <a
-        role="button"
-        class="navbar-burger burger"
-        aria-label="menu"
-        aria-expanded="false"
-        data-target="navbarBasicExample"
-      >
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
-
-    <div id="navbarBasicExample" class="navbar-menu">
-      <div class="navbar-start">
-        <a class="navbar-item">Home</a>
-
-        <a class="navbar-item">Documentation</a>
-
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">More</a>
-
-          <div class="navbar-dropdown">
-            <a class="navbar-item">About</a>
-            <a class="navbar-item">Jobs</a>
-            <a class="navbar-item">Contact</a>
-            <hr class="navbar-divider" />
-            <a class="navbar-item">Report an issue</a>
+  return (
+    <nav
+      className={`navbar is-fixed-top ${
+        theme === DARK ? 'is-dark' : theme === LIGHT ? 'is-light' : null
+      }`}
+    >
+      <div className='container'>
+        <div className='navbar-brand'>
+          <a
+            className='navbar-burger'
+            onClick={() => setIsActive((prevIsActive) => !prevIsActive)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </a>
+        </div>
+        <div
+          className={`navbar-menu ${isActive ? 'is-active' : null} 
+        ${
+          theme === DARK
+            ? 'has-background-dark'
+            : theme === LIGHT
+            ? 'has-background-light'
+            : null
+        }
+        `}
+        >
+          <div className='navbar-end'>
+            <div className='navbar-item'>
+              <div
+                className='field is-grouped'
+                style={{ justifyContent: 'center' }}
+              >
+                <div className='control'>
+                  <span className='icon'>
+                    <InlineIcon icon={crescentMoon} />
+                  </span>
+                </div>
+                <div
+                  className='control'
+                  style={{ marginRight: 0 }}
+                  onClick={() =>
+                    setTheme((prevTheme) => (prevTheme === DARK ? LIGHT : DARK))
+                  }
+                >
+                  <input
+                    type='checkbox'
+                    name='themeToggler'
+                    className='switch is-danger'
+                    checked={theme === LIGHT ? true : false}
+                    readOnly={true}
+                    tabIndex='0'
+                  />
+                  <label htmlFor='themeToggler'></label>
+                </div>
+                <div className='control'>
+                  <span className='icon'>
+                    <InlineIcon icon={sun} />
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="navbar-end">
-        <div class="navbar-item">
-          <div class="buttons">
-            <a class="button is-primary">
-              <strong>Sign up</strong>
-            </a>
-            <a class="button is-light">Log in</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </nav>
-)
+    </nav>
+  )
+}
 
 export default Navbar
