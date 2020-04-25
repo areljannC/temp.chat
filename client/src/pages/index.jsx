@@ -1,24 +1,22 @@
-import React, { useContext } from 'react'
+import React, { useContext, memo } from 'react'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import fetch from 'isomorphic-unfetch'
-import { Layout, Divider } from '../components'
-import { ThemeContext, UserContext, ChatrooomContext } from '../context'
+import { Layout, Flex, Columns, H1, H2, Form } from '../components'
+import { UserContext, ChatrooomContext } from '../context'
 import {
   SERVER_PATH,
   CREATE_CHATROOM,
   JOIN_CHATROOM,
-  DARK,
-  LIGHT
 } from '../constants'
 import { urlify } from '../utils'
 
+// Component
 const Home = () => {
   const router = useRouter()
   const { register, errors, triggerValidation, getValues, reset } = useForm()
-  const { theme } = useContext(ThemeContext)
-  const { user, setUser } = useContext(UserContext)
-  const { chatroom, setChatroom } = useContext(ChatrooomContext)
+  const { setUser } = useContext(UserContext)
+  const { setChatroom } = useContext(ChatrooomContext)
 
   const onSubmitCreateChatroom = async (values) => {
     // 0. Get a UUID for user from server and set user info.
@@ -58,160 +56,83 @@ const Home = () => {
 
   return (
     <Layout>
-      <section
-        className={`hero is-fullheight-with-navbar ${
-          theme === DARK ? 'is-dark' : theme === LIGHT ? 'is-light' : null
-        }`}
-      >
-        <div className='hero-body'>
-          <div className='container'>
-            <div className='columns is-centered'>
-              <div
-                className='column is-6'
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center'
-                }}
-              >
-                <h1
-                  className={`title is-size-1-desktop is-size-2-touch has-text-centered-mobile ${
-                    theme === DARK
-                      ? 'has-text-light'
-                      : theme === LIGHT
-                      ? 'has-text-dark'
-                      : null
-                  }`}
+      <Columns>
+        <Columns.Column>
+          <Flex
+            flexDirectionM='column'
+            flexDirectionL='column'
+            flexDirectionD='column'
+            alignItemsL='center'
+            alignItemsD='center'
+          >
+            <H1>temp.chat</H1>
+            <H2>Temporary chatrooms for anonymous use.</H2>
+          </Flex>
+        </Columns.Column>
+        <Columns.Column>
+          <Flex
+            flexDirectionM='column'
+            flexDirectionL='column'
+            alignItemsM='center'
+          >
+            <Form widthL='60%' widthD='50%'>
+              <Form.Field>
+                <Form.Label>Name</Form.Label>
+                <Form.Input
+                  name='name'
+                  ref={register({ required: true })}
+                  type='text'
+                  autoComplete='off'
+                  hasError={errors.name ? true : false}
+                />
+                <Form.Error>
+                  {errors.name ? 'Please enter a name.' : ' '}
+                </Form.Error>
+              </Form.Field>
+              <Form.Field>
+                <Form.Label>Chatroom</Form.Label>
+                <Form.Input
+                  name='chatroom'
+                  ref={register({ required: true })}
+                  type='text'
+                  autoComplete='off'
+                  hasError={errors.chatroom ? true : false}
+                />
+                <Form.Error>
+                  {errors.chatroom ? 'Please enter a chatroom name.' : ' '}
+                </Form.Error>
+              </Form.Field>
+              <Form.Field>
+                <Form.Button
+                  isSubmit
+                  onClick={async () => {
+                    if (await triggerValidation()) {
+                      onSubmitCreateChatroom(getValues())
+                      reset()
+                    }
+                  }}
                 >
-                  temp.chat
-                </h1>
-                <h2
-                  className={`subtitle is-size-4-desktop is-size-5-touch has-text-centered-mobile ${
-                    theme === DARK
-                      ? 'has-text-light'
-                      : theme === LIGHT
-                      ? 'has-text-dark'
-                      : null
-                  }`}
+                  Create
+                </Form.Button>
+              </Form.Field>
+              <Form.Field>
+                <Form.Button
+                  onClick={async () => {
+                    if (await triggerValidation()) {
+                      onSubmitJoinChatroom(getValues())
+                      reset()
+                    }
+                  }}
                 >
-                  Temporary chatrooms for anonymous use.
-                </h2>
-              </div>
-              <div className='column is-4'>
-                <form>
-                  <div className='field'>
-                    <label
-                      className={`label is-size-5-desktop is-size-6-touch ${
-                        theme === DARK
-                          ? 'has-text-light'
-                          : theme === LIGHT
-                          ? 'has-text-dark'
-                          : null
-                      }`}
-                    >
-                      Name
-                    </label>
-                    <div className='control'>
-                      <input
-                        type='text'
-                        className='input'
-                        name='name'
-                        ref={register({
-                          required: true
-                        })}
-                        autoComplete='off'
-                      />
-                    </div>
-                    <label
-                      className='label has-text-danger is-size-6-desktop is-size-7-touch'
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {errors.name ? 'Please enter a name.' : ' '}
-                    </label>
-                  </div>
-                  <div className='field'>
-                    <label
-                      className={`label is-size-5-desktop is-size-6-touch ${
-                        theme === DARK
-                          ? 'has-text-light'
-                          : theme === LIGHT
-                          ? 'has-text-dark'
-                          : null
-                      }`}
-                    >
-                      Chatroom
-                    </label>
-                    <div className='control'>
-                      <input
-                        type='text'
-                        className='input'
-                        name='chatroom'
-                        ref={register({
-                          required: true
-                        })}
-                        autoComplete='off'
-                      />
-                    </div>
-                    <label
-                      className='label has-text-danger is-size-6-desktop is-size-7-touch'
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {errors.chatroom ? 'Please enter a chatroom name.' : ' '}
-                    </label>
-                  </div>
-                  <Divider />
-                  <div className='field'>
-                    <div className='control'>
-                      <button
-                        className='button is-fullwidth is-danger has-text-weight-semibold is-size-5-desktop is-size-6-touch'
-                        type='button'
-                        onClick={async () => {
-                          if (await triggerValidation()) {
-                            onSubmitCreateChatroom(getValues())
-                            reset()
-                          }
-                        }}
-                      >
-                        <span className='is-size-5-desktop is-size-6-touch'>
-                          Create
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                  <div className='field'>
-                    <div className='control'>
-                      <button
-                        className={`button is-fullwidth has-text-weight-semibold is-size-5-desktop is-size-6-touch
-                          ${
-                            theme === DARK
-                              ? 'is-dark'
-                              : theme === LIGHT
-                              ? 'is-light'
-                              : null
-                          }
-                        `}
-                        type='button'
-                        onClick={async () => {
-                          if (await triggerValidation()) {
-                            onSubmitJoinChatroom(getValues())
-                            reset()
-                          }
-                        }}
-                      >
-                        <span className='is-size-5-desktop is-size-6-touch'>
-                          Join
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                  Join
+                </Form.Button>
+              </Form.Field>
+            </Form>
+          </Flex>
+        </Columns.Column>
+      </Columns>
     </Layout>
   )
 }
 
-export default Home
+export default memo(Home)
