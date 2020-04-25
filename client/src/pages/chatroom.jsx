@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { Layout, Columns, Flex, Chat } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
 import {
-  WEB_SOCKET_PATH,
+  WEBSOCKET_PATH,
   NEW_MESSAGE,
 } from '../constants'
 
@@ -23,7 +23,7 @@ const Chatroom = () => {
     if (!user && !chatroom) {
       router.push('/')
     } else {
-      ws.current = new WebSocket(WEB_SOCKET_PATH)
+      ws.current = new WebSocket(WEBSOCKET_PATH)
       ws.current.onopen = (event) => {
         ws.current.send(
           JSON.stringify({

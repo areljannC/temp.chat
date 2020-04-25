@@ -4,10 +4,7 @@ const http = require('http')
 const cors = require('cors')
 const uuidv4 = require('uuid').v4
 const WebSocketServer = require('ws').Server
-const { NEW_MESSAGE, CREATE_CHATROOM, JOIN_CHATROOM, LEAVE_CHATROOM } = require('./constants')
-require('dotenv').config()
-
-const port = process.env.PORT || 4000
+const { NEW_MESSAGE, CREATE_CHATROOM, JOIN_CHATROOM, LEAVE_CHATROOM, PORT } = require('./constants')
 
 // middleware
 app.use(cors())
@@ -25,7 +22,9 @@ app.get('/uuid', async (req, res) => {
 
 // Setup http server
 const server = http.createServer(app)
-server.listen(port, () => { console.log(`Listening on port ${port}`) })
+server.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`)
+})
 
 // setup WebSockets
 const wss = new WebSocketServer({ server })
@@ -70,14 +69,16 @@ wss.on('connection', (ws, req, client) => {
         chatroom = chatrooms.get(data.chatroom.name)
         // Send message to all connected user sockets.
         chatroom.forEach((ws) => {
-          ws.send(JSON.stringify({
-            type: NEW_MESSAGE,
-            data: {
-              user: data.user,
-              message: data.message,
-              sentTimestamp: data.sentTimestamp
-            }
-          }))
+          ws.send(
+            JSON.stringify({
+              type: NEW_MESSAGE,
+              data: {
+                user: data.user,
+                message: data.message,
+                sentTimestamp: data.sentTimestamp,
+              },
+            })
+          )
         })
         break
       case LEAVE_CHATROOM:
