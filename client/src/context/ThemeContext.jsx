@@ -3,17 +3,25 @@ import { ThemeProvider as SCTP } from 'styled-components'
 import { DARK, LIGHT } from '../constants'
 
 const darkTheme = {
+  black: '#333333',
+  white: '#FCFCFE',
   background: '#333333',
   foreground: '#FCFCFE',
   primary: '#F45B5D',
-  border: '#FCFCFE'
+  border: '#FCFCFE',
+  font: `'IBM Plex Sans Condensed', sans-serif`,
+  borderRadius: '0.2rem'
 }
 
 const lightTheme = {
+  black: '#333333',
+  white: '#FCFCFE',
   background: '#FCFCFE',
   foreground: '#333333',
   primary: '#F45B5D',
-  border: '#333333'
+  border: '#333333',
+  font: `'IBM Plex Sans Condensed', sans-serif`,
+  borderRadius: '0.2rem'
 }
 
 export const ThemeContext = createContext()
@@ -35,8 +43,17 @@ export const ThemeContextProvider = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ currentTheme, toggleTheme }}>
-      {currentTheme === DARK ? <SCTP theme={darkTheme}>{children}</SCTP> : null}
-      {currentTheme === LIGHT ? <SCTP theme={lightTheme}>{children}</SCTP> : null}
+      <SCTP
+        theme={
+          currentTheme === DARK
+            ? darkTheme
+            : currentTheme === LIGHT
+            ? lightTheme
+            : darkTheme
+        }
+      >
+        {children}
+      </SCTP>
     </ThemeContext.Provider>
   )
 }
