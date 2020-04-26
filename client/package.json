@@ -21,6 +21,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^5.5.3",
+    "react-spinners": "^0.8.1",
     "reset-css": "^5.0.1",
     "styled-components": "^5.1.0"
   },

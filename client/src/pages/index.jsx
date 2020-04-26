@@ -1,10 +1,10 @@
-import React, { useContext, memo } from 'react'
+import React, { useState, useContext, useEffect, memo } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
 import fetch from 'isomorphic-unfetch'
-import { Layout, Flex, Columns, H1, H2, Form } from '../components'
+import { useForm } from 'react-hook-form'
+import { Layout, Flex, Columns, H1, H2, Form, Loader } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
 import { SERVER_PATH, CREATE_CHATROOM, JOIN_CHATROOM, ENV } from '../constants'
 import { urlify } from '../utils'
@@ -18,12 +18,15 @@ const Home = () => {
     )
   }
 
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { register, errors, triggerValidation, getValues, reset } = useForm()
   const { setUser } = useContext(UserContext)
   const { setChatroom } = useContext(ChatrooomContext)
 
   const onSubmitCreateChatroom = async (values) => {
+    setIsLoading(true)
+
     // 0. Get a UUID for user from server and set user info.
     let response = await fetch(`${SERVER_PATH}/uuid`).then((res) => res.json())
     setUser({ id: response.uuid, name: values.name })
@@ -42,6 +45,8 @@ const Home = () => {
   }
 
   const onSubmitJoinChatroom = async (values) => {
+    setIsLoading(true)
+
     // 0. Get a UUID for user from server and set user info.
     let response = await fetch(`${SERVER_PATH}/uuid`).then((res) => res.json())
     setUser({ id: response.uuid, name: values.name })
@@ -58,6 +63,10 @@ const Home = () => {
     // 2. Push user to '/chatroom' page.
     router.push('/chatroom')
   }
+
+  useEffect(() => {
+    return () => setIsLoading(false)
+  })
 
   return (
     <Layout>
@@ -87,59 +96,63 @@ const Home = () => {
             flexDirectionL='column'
             alignItemsM='center'
           >
-            <Form widthL='60%' widthD='50%'>
-              <Form.Field>
-                <Form.Label>Name</Form.Label>
-                <Form.Input
-                  name='name'
-                  ref={register({ required: true })}
-                  type='text'
-                  autoComplete='off'
-                  hasError={errors.name ? true : false}
-                />
-                <Form.Error>
-                  {errors.name ? 'Please enter a name.' : ' '}
-                </Form.Error>
-              </Form.Field>
-              <Form.Field>
-                <Form.Label>Chatroom</Form.Label>
-                <Form.Input
-                  name='chatroom'
-                  ref={register({ required: true })}
-                  type='text'
-                  autoComplete='off'
-                  hasError={errors.chatroom ? true : false}
-                />
-                <Form.Error>
-                  {errors.chatroom ? 'Please enter a chatroom name.' : ' '}
-                </Form.Error>
-              </Form.Field>
-              <Form.Field>
-                <Form.Button
-                  isSubmit
-                  onClick={async () => {
-                    if (await triggerValidation()) {
-                      onSubmitCreateChatroom(getValues())
-                      reset()
-                    }
-                  }}
-                >
-                  Create
-                </Form.Button>
-              </Form.Field>
-              <Form.Field>
-                <Form.Button
-                  onClick={async () => {
-                    if (await triggerValidation()) {
-                      onSubmitJoinChatroom(getValues())
-                      reset()
-                    }
-                  }}
-                >
-                  Join
-                </Form.Button>
-              </Form.Field>
-            </Form>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <Form widthL='60%' widthD='50%'>
+                <Form.Field>
+                  <Form.Label>Name</Form.Label>
+                  <Form.Input
+                    name='name'
+                    ref={register({ required: true })}
+                    type='text'
+                    autoComplete='off'
+                    hasError={errors.name ? true : false}
+                  />
+                  <Form.Error>
+                    {errors.name ? 'Please enter a name.' : ' '}
+                  </Form.Error>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Label>Chatroom</Form.Label>
+                  <Form.Input
+                    name='chatroom'
+                    ref={register({ required: true })}
+                    type='text'
+                    autoComplete='off'
+                    hasError={errors.chatroom ? true : false}
+                  />
+                  <Form.Error>
+                    {errors.chatroom ? 'Please enter a chatroom name.' : ' '}
+                  </Form.Error>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Button
+                    isSubmit
+                    onClick={async () => {
+                      if (await triggerValidation()) {
+                        onSubmitCreateChatroom(getValues())
+                        reset()
+                      }
+                    }}
+                  >
+                    Create
+                  </Form.Button>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Button
+                    onClick={async () => {
+                      if (await triggerValidation()) {
+                        onSubmitJoinChatroom(getValues())
+                        reset()
+                      }
+                    }}
+                  >
+                    Join
+                  </Form.Button>
+                </Form.Field>
+              </Form>
+            )}
           </Flex>
         </Columns.Column>
       </Columns>
