@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { Layout, Columns, Flex, Chat } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
-import { WEBSOCKET_PATH, NEW_MESSAGE } from '../constants'
+import { WEBSOCKET_PATH, NEW_MESSAGE, ENV } from '../constants'
 
 const Chatroom = () => {
   // enforce HTTPS
