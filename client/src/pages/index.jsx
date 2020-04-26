@@ -69,7 +69,7 @@ const Home = () => {
         />
       </Head>
       <Columns>
-        <Columns.Column>
+        <Columns.Column heightM='50%'>
           <Flex
             flexDirectionM='column'
             flexDirectionL='column'
@@ -81,7 +81,7 @@ const Home = () => {
             <H2>Temporary chatrooms for anonymous use.</H2>
           </Flex>
         </Columns.Column>
-        <Columns.Column>
+        <Columns.Column heightM='50%'>
           <Flex
             flexDirectionM='column'
             flexDirectionL='column'
