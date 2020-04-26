@@ -66,7 +66,7 @@ const Home = () => {
 
   useEffect(() => {
     return () => setIsLoading(false)
-  })
+  }, [])
 
   return (
     <Layout>
