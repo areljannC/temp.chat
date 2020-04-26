@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-import fetch from 'isomorphic-unfetch'
+import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { Layout, Columns, Flex, Chat } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
 import { WEBSOCKET_PATH, NEW_MESSAGE } from '../constants'
 
 const Chatroom = () => {
+  // enforce HTTPS
+  if (ENV !== 'development' && location.protocol !== 'https:') {
+    location.replace(
+      `https:${location.href.substring(location.protocol.length)}`
+    )
+  }
+
   const { register, handleSubmit } = useForm()
   const router = useRouter()
   const { user } = useContext(UserContext)

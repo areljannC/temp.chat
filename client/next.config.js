@@ -10,5 +10,6 @@ module.exports = withSass({
       process.env.NODE_ENV === 'production'
       ? process.env.PROD_WEBSOCKET_PATH
       : process.env.DEV_WEBSOCKET_PATH,
+    ENV: process.env.NODE_ENV || 'development'
   }
 })

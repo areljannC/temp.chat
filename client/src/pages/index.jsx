@@ -1,15 +1,23 @@
 import React, { useContext, memo } from 'react'
 import Head from 'next/head'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import fetch from 'isomorphic-unfetch'
 import { Layout, Flex, Columns, H1, H2, Form } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
-import { SERVER_PATH, CREATE_CHATROOM, JOIN_CHATROOM } from '../constants'
+import { SERVER_PATH, CREATE_CHATROOM, JOIN_CHATROOM, ENV } from '../constants'
 import { urlify } from '../utils'
 
 // Component
 const Home = () => {
+  // enforce HTTPS
+  if (ENV !== 'development' && location.protocol !== 'https:') {
+    location.replace(
+      `https:${location.href.substring(location.protocol.length)}`
+    )
+  }
+
   const router = useRouter()
   const { register, errors, triggerValidation, getValues, reset } = useForm()
   const { setUser } = useContext(UserContext)
@@ -139,4 +147,4 @@ const Home = () => {
   )
 }
 
-export default memo(Home)
+export default dynamic(() => Promise.resolve(memo(Home)), { ssr: false })
