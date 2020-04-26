@@ -1,14 +1,11 @@
 import React, { useContext, memo } from 'react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import fetch from 'isomorphic-unfetch'
 import { Layout, Flex, Columns, H1, H2, Form } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
-import {
-  SERVER_PATH,
-  CREATE_CHATROOM,
-  JOIN_CHATROOM,
-} from '../constants'
+import { SERVER_PATH, CREATE_CHATROOM, JOIN_CHATROOM } from '../constants'
 import { urlify } from '../utils'
 
 // Component
@@ -56,6 +53,13 @@ const Home = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>temp.chat</title>
+        <meta
+          name='description'
+          content='Temporary chatrooms for anonymous use.'
+        />
+      </Head>
       <Columns>
         <Columns.Column>
           <Flex

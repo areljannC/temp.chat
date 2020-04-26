@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import fetch from 'isomorphic-unfetch'
 import { useForm } from 'react-hook-form'
 import { Layout, Columns, Flex, Chat } from '../components'
 import { UserContext, ChatrooomContext } from '../context'
-import {
-  WEBSOCKET_PATH,
-  NEW_MESSAGE,
-} from '../constants'
+import { WEBSOCKET_PATH, NEW_MESSAGE } from '../constants'
 
 const Chatroom = () => {
   const { register, handleSubmit } = useForm()
@@ -66,6 +64,13 @@ const Chatroom = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>temp.chat</title>
+        <meta
+          name='description'
+          content='Temporary chatrooms for anonymous use.'
+        />
+      </Head>
       <Columns>
         <Columns.Column>
           <Flex>
