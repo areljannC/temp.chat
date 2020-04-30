@@ -4,7 +4,6 @@ import { DEVICE } from '../constants'
 
 // Components
 const Form = ({ children, widthM = '80%', widthL = '80%', widthD = '80%' }) => {
-  const components = ['Form.Field']
   return (
     <Container
       widthM={widthM}
@@ -12,19 +11,20 @@ const Form = ({ children, widthM = '80%', widthL = '80%', widthD = '80%' }) => {
       widthD={widthD}
       onSubmit={(e) => e.preventDefault()}
     >
-      {Children.toArray(children).filter((child) =>
-        components.includes(child.type?.displayName)
-      )}
+      {Children.toArray(children).filter((child) => Form.Field)}
     </Container>
   )
 }
 
 Form.Field = ({ children }) => {
-  const components = ['Form.Label', 'Form.Input', 'Form.Error', 'Form.Button']
   return (
     <Field>
-      {Children.toArray(children).filter((child) =>
-        components.includes(child.type?.displayName)
+      {Children.toArray(children).filter(
+        (child) =>
+          child.type === Form.Label ||
+          child.type === Form.Input ||
+          child.type === Form.Error ||
+          child.type === Form.Button
       )}
     </Field>
   )
@@ -37,13 +37,6 @@ Form.Input = forwardRef((props, ref) => <Input ref={ref} {...props} />)
 Form.Error = ({ children }) => <Error>{children}</Error>
 
 Form.Button = ({ children, ...props }) => <Button {...props}>{children}</Button>
-
-// Set component display names
-Form.Field.displayName = 'Form.Field'
-Form.Label.displayName = 'Form.Label'
-Form.Input.displayName = 'Form.Input'
-Form.Error.displayName = 'Form.Error'
-Form.Button.displayName = 'Form.Button'
 
 // Styles
 const Container = styled.form`

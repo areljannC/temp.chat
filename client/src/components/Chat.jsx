@@ -7,22 +7,20 @@ import { getDateDistanceFromToday } from '../utils'
 
 // Components
 const Chat = ({ children, widthM = '80%', widthL = '80%', widthD = '80%' }) => {
-  const components = ['Chat.Box', 'Chat.InputBar']
   return (
     <Container widthM={widthM} widthL={widthL} widthD={widthD}>
-      {Children.toArray(children).filter((child) =>
-        components.includes(child.type?.displayName)
+      {Children.toArray(children).filter(
+        (child) => child.type === Chat.Box || child.type === Chat.InputBar
       )}
     </Container>
   )
 }
 
 Chat.Box = forwardRef(({ children }, ref) => {
-  const components = ['Chat.Message']
   return (
     <Box ref={ref}>
-      {Children.toArray(children).filter((child) =>
-        components.includes(child.type?.displayName)
+      {Children.toArray(children).filter(
+        (child) => child.type === Chat.Message
       )}
     </Box>
   )
@@ -65,11 +63,6 @@ Chat.InputBar = forwardRef(({ onSubmit, ...props }, ref) => {
 })
 
 Chat.Input = forwardRef((props, ref) => <Input ref={ref} {...props} />)
-
-// Set component display names
-Chat.Box.displayName = 'Chat.Box'
-Chat.Message.displayName = 'Chat.Message'
-Chat.InputBar.displayName = 'Chat.InputBar'
 
 // Styles
 const Container = styled.div`
