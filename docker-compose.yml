@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  server:
+    container_name: server
+    build: ./server
+    ports:
+      - '9090:9090'
+    environment:
+      - PORT=9090
+      - REDIS_URL=redis://cache
+      - REDIS_PASSWORD=eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
+    volumes:
+      - ./server:/usr/src/server
+    depends_on:
+      - cache
+  cache:
+    container_name: cache
+    image: redis:7-alpine3.16
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - ./cache:/usr/src/cache
