@@ -1,1 +1,1 @@
-export { default as SocketManager } from './socket-mananager';
+export { default as SocketManager } from './socket-manager';
