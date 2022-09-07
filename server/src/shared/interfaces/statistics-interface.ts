@@ -1,7 +1,7 @@
 // SHARED IMPORT
 import { CountStatisticsType } from '@types';
 
-interface IStatisticsManager {
+interface IStatistics {
   publicRoomsCount: CountStatisticsType;
   privateRoomsCount: CountStatisticsType;
   usersCount: CountStatisticsType;
@@ -12,4 +12,4 @@ interface IStatisticsManager {
   updateUsersCountBy(count: CountStatisticsType): Promise<void>;
 }
 
-export default IStatisticsManager;
+export default IStatistics;
