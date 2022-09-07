@@ -6,7 +6,7 @@ import { ICache } from '@interfaces';
 import { getRedisClient } from '@utils';
 
 class Cache implements ICache {
-  public client: RedisClientType | undefined;
+  private client: RedisClientType | undefined;
 
   public constructor() {
     this.client = undefined;
