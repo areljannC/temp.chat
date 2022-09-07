@@ -2,7 +2,7 @@
 import { SocketEventType } from '@types';
 import { ISocketManager } from '@interfaces';
 import { SOCKET_EVENT } from '@constants';
-import { Cache } from '@singletons';
+import { Cache, Statistics } from '@singletons';
 import { socketEventSchema } from '@schemas';
 import { getTimestamp, encrypt, decrypt } from '@utils';
 
@@ -78,8 +78,15 @@ const createRoomHandler = async (socketManager: ISocketManager, socketEventBuffe
     data: { message: `${decrypt(socketManager.user!.name)} connected.` }
   });
 
-  // Update application statistics.
-  await cache.hSet('statistics:rooms', socketManager.room?.password! ? 'private' : 'public', 1)
+  // Update users statistics.
+  await Statistics.updateUsersCountBy({ current: 1, total: 1 });
+
+  // Update rooms statistics.
+  if (socketManager!.room!.password) {
+    await Statistics.updatePrivateRoomsCountBy({ current: 1, total: 1 });
+  } else {
+    await Statistics.updatePublicRoomsCountBy({ current: 1, total: 1 });
+  }
 };
 
 export default createRoomHandler;

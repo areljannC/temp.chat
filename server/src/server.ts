@@ -11,7 +11,7 @@ import { SocketEventType } from '@types';
 import { ISocketManager } from '@interfaces';
 import { SOCKET_EVENT } from '@constants';
 import { SocketManager } from '@classes';
-import { Cache } from '@singletons';
+import { Cache, Statistics } from '@singletons';
 import { getTimestamp, getRedisClient, decrypt } from '@utils';
 
 // LOCAL IMPORTS
@@ -95,9 +95,20 @@ wss.on('connection', async (ws: WebSocket) => {
     // Decrement the room user count by 1.
     await cache.hIncrBy(socketManager!.room!.cacheKey!, 'users', -1);
 
+    // Update users statistics.
+    await Statistics.updateUsersCountBy({ current: -1 });
+
     // Delete the room if it is empty.
-    if (Number(await cache.hGet(socketManager!.room!.cacheKey!, 'users')) <= 0)
+    if (Number(await cache.hGet(socketManager!.room!.cacheKey!, 'users')) <= 0) {
       await cache.del(socketManager!.room!.cacheKey!);
+
+      // Update rooms statistics.
+      if (socketManager!.room!.password) {
+        await Statistics.updatePrivateRoomsCountBy({ current: -1 });
+      } else {
+        await Statistics.updatePublicRoomsCountBy({ current: -1 });
+      }
+    }
 
     // Make the user unsubscribe from the channel.
     await socketManager!.unsubscribe(socketManager!.room!.cacheKey!);
@@ -116,5 +127,10 @@ wss.on('connection', async (ws: WebSocket) => {
     socketManager = undefined;
   });
 });
+
+// Statistics Manager
+async () => {
+  await Statistics.initialize();
+};
 
 export default server;
