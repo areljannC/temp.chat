@@ -15,19 +15,19 @@ const MAX = 'max';
 const TOTAL = 'total';
 
 class StatisticsManager implements IStatisticsManager {
-  publicRoomsCount: CountStatisticsType;
-  privateRoomsCount: CountStatisticsType;
-  usersCount: CountStatisticsType;
-  cache: RedisClientType | undefined;
+  public publicRoomsCount: CountStatisticsType;
+  public privateRoomsCount: CountStatisticsType;
+  public usersCount: CountStatisticsType;
+  public cache: RedisClientType | undefined;
 
-  constructor() {
+  public constructor() {
     this.publicRoomsCount = { current: 0, max: 0, total: 0 };
     this.privateRoomsCount = { current: 0, max: 0, total: 0 };
     this.usersCount = { current: 0, max: 0, total: 0 };
     this.cache = undefined;
   }
 
-  async initialize(): Promise<void> {
+  public async initialize(): Promise<void> {
     this.cache = (await Cache.getClient()) as RedisClientType;
 
     if (!(await this.cache.exists(PUBLIC_ROOMS_COUNT))) {
@@ -61,7 +61,7 @@ class StatisticsManager implements IStatisticsManager {
     }
   }
 
-  async updatePublicRoomsCountBy(count: CountStatisticsType): Promise<void> {
+  public async updatePublicRoomsCountBy(count: CountStatisticsType): Promise<void> {
     if (count.current !== undefined) {
       await this.cache!.hIncrBy(PUBLIC_ROOMS_COUNT, CURRENT, count.current);
       this.publicRoomsCount.current = Number(await this.cache!.hGet(PUBLIC_ROOMS_COUNT, CURRENT));
@@ -78,7 +78,7 @@ class StatisticsManager implements IStatisticsManager {
     }
   }
 
-  async updatePrivateRoomsCountBy(count: CountStatisticsType): Promise<void> {
+  public async updatePrivateRoomsCountBy(count: CountStatisticsType): Promise<void> {
     if (count.current !== undefined) {
       await this.cache!.hIncrBy(PRIVATE_ROOMS_COUNT, CURRENT, count.current);
       this.privateRoomsCount.current = Number(await this.cache!.hGet(PRIVATE_ROOMS_COUNT, CURRENT));
@@ -95,7 +95,7 @@ class StatisticsManager implements IStatisticsManager {
     }
   }
 
-  async updateUsersCountBy(count: CountStatisticsType): Promise<void> {
+  public async updateUsersCountBy(count: CountStatisticsType): Promise<void> {
     if (count.current !== undefined) {
       await this.cache!.hIncrBy(USERS_COUNT, CURRENT, count.current);
       this.usersCount.current = Number(await this.cache!.hGet(USERS_COUNT, CURRENT));

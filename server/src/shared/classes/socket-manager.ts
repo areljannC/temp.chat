@@ -13,7 +13,7 @@ class SocketManager implements ISocketManager {
   public user: UserType | undefined;
   public room: (RoomType & { cacheKey?: string }) | undefined;
 
-  constructor(socket: WebSocket, subscriber: RedisClientType, publisher: RedisClientType) {
+  public constructor(socket: WebSocket, subscriber: RedisClientType, publisher: RedisClientType) {
     this.socket = socket;
     this.subscriber = subscriber;
     this.publisher = publisher;
@@ -21,20 +21,20 @@ class SocketManager implements ISocketManager {
     this.room = undefined;
   }
 
-  setUser(user: UserType): void {
+  public setUser(user: UserType): void {
     this.user = user;
   }
 
-  setRoom(room: RoomType & { cacheKey?: string }): void {
+  public setRoom(room: RoomType & { cacheKey?: string }): void {
     this.room = room;
   }
 
-  async connect(connections: { subscriber: boolean; publisher: boolean }): Promise<void> {
+  public async connect(connections: { subscriber: boolean; publisher: boolean }): Promise<void> {
     if (connections.subscriber && !this.subscriber.isOpen) await this.subscriber.connect();
     if (connections.publisher && !this.publisher.isOpen) await this.publisher.connect();
   }
 
-  async disconnect(connections: {
+  public async disconnect(connections: {
     socket: boolean;
     subscriber: boolean;
     publisher: boolean;
@@ -44,19 +44,19 @@ class SocketManager implements ISocketManager {
     if (connections.publisher && this.publisher.isOpen) await this.publisher.disconnect();
   }
 
-  send(socketEvent: SocketEventType): void {
+  public send(socketEvent: SocketEventType): void {
     this.socket.send(JSON.stringify(socketEvent));
   }
 
-  async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
+  public async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
     await this.subscriber.subscribe(channel, callback);
   }
 
-  async unsubscribe(channel: string): Promise<void> {
+  public async unsubscribe(channel: string): Promise<void> {
     await this.subscriber.unsubscribe(channel);
   }
 
-  async publish(channel: string, message: any): Promise<void> {
+  public async publish(channel: string, message: any): Promise<void> {
     await this.publisher.publish(channel, JSON.stringify(message));
   }
 }
