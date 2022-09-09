@@ -1,7 +1,7 @@
 // SHARED IMPORTS
 import { SocketEventType } from '@types';
 import { ISocketManager } from '@interfaces';
-import { SOCKET_EVENT } from '@constants';
+import { SOCKET_EVENT, SOCKET_STATUS } from '@constants';
 import { Cache } from '@singletons';
 import { socketEventSchema } from '@schemas';
 import { getTimestamp } from '@utils';
@@ -18,6 +18,7 @@ const leaveRoomHandler = async (socketManager: ISocketManager, socketEventBuffer
       type: SOCKET_EVENT.INFO.INVALID_SOCKET_EVENT,
       data: { message: validation.error.message }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -31,11 +32,12 @@ const leaveRoomHandler = async (socketManager: ISocketManager, socketEventBuffer
       type: SOCKET_EVENT.INFO.ROOM_NOT_EXIST,
       data: { message: 'Chatroom does not exist.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
   // Disconnect the socket.
-  socketManager.disconnect({ socket: true, subscriber: false, publisher: false });
+  socketManager.disconnect({ socket: true });
 };
 
 export default leaveRoomHandler;

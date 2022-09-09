@@ -1,7 +1,7 @@
 // SHARED IMPORTS
 import { SocketEventType } from '@types';
 import { ISocketManager } from '@interfaces';
-import { SOCKET_EVENT } from '@constants';
+import { SOCKET_EVENT, SOCKET_STATUS } from '@constants';
 import { Cache, Statistics } from '@singletons';
 import { socketEventSchema } from '@schemas';
 import { getTimestamp, encrypt, decrypt } from '@utils';
@@ -21,6 +21,7 @@ const createRoomHandler = async (socketManager: ISocketManager, socketEventBuffe
       type: SOCKET_EVENT.INFO.INVALID_SOCKET_EVENT,
       data: { message: validation.error.message }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -52,6 +53,7 @@ const createRoomHandler = async (socketManager: ISocketManager, socketEventBuffe
       type: SOCKET_EVENT.INFO.ROOM_EXISTS,
       data: { message: 'Chatroom already exists.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -70,6 +72,9 @@ const createRoomHandler = async (socketManager: ISocketManager, socketEventBuffe
   await socketManager.subscribe(socketManager.room!.cacheKey!, (message: string) => {
     subscriptionHandler(socketManager, message);
   });
+
+  // Update the socket status to connected.
+  socketManager.setStatus(SOCKET_STATUS.CONNECTED);
 
   // Notify other users that this user has connected to the room.
   await socketManager.publish(socketManager.room!.cacheKey!, {

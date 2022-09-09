@@ -1,7 +1,7 @@
 // SHARED IMPORTS
 import { SocketEventType } from '@types';
 import { ISocketManager } from '@interfaces';
-import { SOCKET_EVENT } from '@constants';
+import { SOCKET_EVENT, SOCKET_STATUS } from '@constants';
 import { Cache, Statistics } from '@singletons';
 import { socketEventSchema } from '@schemas';
 import { getTimestamp, encrypt, decrypt } from '@utils';
@@ -21,6 +21,7 @@ const joinRoomHandler = async (socketManager: ISocketManager, socketEventBuffer:
       type: SOCKET_EVENT.INFO.INVALID_SOCKET_EVENT,
       data: { message: validation.error.message }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -52,6 +53,7 @@ const joinRoomHandler = async (socketManager: ISocketManager, socketEventBuffer:
       type: SOCKET_EVENT.INFO.ROOM_NOT_EXIST,
       data: { message: 'Chatroom does not exist.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -65,6 +67,7 @@ const joinRoomHandler = async (socketManager: ISocketManager, socketEventBuffer:
       type: SOCKET_EVENT.INFO.INCORRECT_ROOM_PASSWORD,
       data: { message: 'Chatroom password incorrect.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -75,6 +78,7 @@ const joinRoomHandler = async (socketManager: ISocketManager, socketEventBuffer:
       type: SOCKET_EVENT.INFO.USER_ALREADY_IN_ROOM,
       data: { message: 'User already in room.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -89,13 +93,16 @@ const joinRoomHandler = async (socketManager: ISocketManager, socketEventBuffer:
     subscriptionHandler(socketManager, message);
   });
 
+  // Update the socket status to connected.
+  socketManager.setStatus(SOCKET_STATUS.CONNECTED);
+
   // Notify other users that this user has connected to the room.
   await socketManager.publish(socketManager.room!.cacheKey!, {
     timestamp: getTimestamp(),
     type: SOCKET_EVENT.INFO.USER_CONNECTED,
     data: { message: `${decrypt(socketManager.user!.name)} connected.` }
   });
-  
+
   // Update users statistics.
   await Statistics.updateUsersCountBy({ current: 1, total: 1 });
 };

@@ -1,7 +1,7 @@
 // SHARED IMPORTS
 import { SocketEventType } from '@types';
 import { ISocketManager } from '@interfaces';
-import { SOCKET_EVENT } from '@constants';
+import { SOCKET_EVENT, SOCKET_STATUS } from '@constants';
 import { Cache } from '@singletons';
 import { socketEventSchema } from '@schemas';
 import { getTimestamp, encrypt } from '@utils';
@@ -18,6 +18,7 @@ const sendMessageHandler = async (socketManager: ISocketManager, socketEventBuff
       type: SOCKET_EVENT.INFO.INVALID_SOCKET_EVENT,
       data: { message: validation.error.message }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -31,6 +32,7 @@ const sendMessageHandler = async (socketManager: ISocketManager, socketEventBuff
       type: SOCKET_EVENT.INFO.ROOM_NOT_EXIST,
       data: { message: 'Chatroom does not exist.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
@@ -41,6 +43,7 @@ const sendMessageHandler = async (socketManager: ISocketManager, socketEventBuff
       type: SOCKET_EVENT.INFO.USER_NOT_IN_ROOM,
       data: { message: 'User not in room.' }
     });
+    socketManager.disconnect({ socket: true });
     return;
   }
 
