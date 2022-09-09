@@ -3,8 +3,9 @@ import { WebSocket } from 'ws';
 import { RedisClientType } from 'redis';
 
 // SHARED IMPORTS
-import { RoomType, SocketEventType, UserType } from '@types';
+import { RoomType, SocketEventType, UserType, SocketStatusType } from '@types';
 import { ISocketManager } from '@interfaces';
+import { SOCKET_STATUS } from '@constants';
 
 class SocketManager implements ISocketManager {
   public socket: WebSocket;
@@ -12,6 +13,7 @@ class SocketManager implements ISocketManager {
   public publisher: RedisClientType;
   public user: UserType | undefined;
   public room: (RoomType & { cacheKey?: string }) | undefined;
+  public status: SocketStatusType;
 
   public constructor(socket: WebSocket, subscriber: RedisClientType, publisher: RedisClientType) {
     this.socket = socket;
@@ -19,6 +21,7 @@ class SocketManager implements ISocketManager {
     this.publisher = publisher;
     this.user = undefined;
     this.room = undefined;
+    this.status = SOCKET_STATUS.CONNECTING;
   }
 
   public setUser(user: UserType): void {
@@ -29,15 +32,19 @@ class SocketManager implements ISocketManager {
     this.room = room;
   }
 
-  public async connect(connections: { subscriber: boolean; publisher: boolean }): Promise<void> {
+  public setStatus(status: SocketStatusType): void {
+    this.status = status;
+  }
+
+  public async connect(connections: { subscriber?: boolean; publisher?: boolean }): Promise<void> {
     if (connections.subscriber && !this.subscriber.isOpen) await this.subscriber.connect();
     if (connections.publisher && !this.publisher.isOpen) await this.publisher.connect();
   }
 
   public async disconnect(connections: {
-    socket: boolean;
-    subscriber: boolean;
-    publisher: boolean;
+    socket?: boolean;
+    subscriber?: boolean;
+    publisher?: boolean;
   }): Promise<void> {
     if (connections.socket && this.socket.readyState === WebSocket.OPEN) this.socket.close();
     if (connections.subscriber && this.subscriber.isOpen) await this.subscriber.disconnect();
