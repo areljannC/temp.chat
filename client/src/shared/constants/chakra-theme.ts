@@ -5,7 +5,7 @@ import { Styles, StyleFunctionProps } from '@chakra-ui/theme-tools';
 import { ColorMode } from '@chakra-ui/color-mode';
 
 // SHARED IMPORTS
-import { COLORS, COLOR_MODE } from '@constants';
+import { COLOR, COLOR_MODE } from '@constants';
 
 // Custom Styles
 const customStyles: Styles = Object.freeze({
@@ -19,8 +19,8 @@ const customStyles: Styles = Object.freeze({
     body: {
       width: '100%',
       height: '100%',
-      background: props.colorMode === COLOR_MODE.LIGHT ? COLORS.WHITE : COLORS.BLACK,
-      color: props.colorMode === COLOR_MODE.LIGHT ? COLORS.BLACK : COLORS.WHITE,
+      background: props.colorMode === COLOR_MODE.LIGHT ? COLOR.WHITE : COLOR.BLACK,
+      color: props.colorMode === COLOR_MODE.LIGHT ? COLOR.BLACK : COLOR.WHITE,
       textRendering: 'optimizeLegibility',
       WebkitFontSmoothing: 'antialiased'
     },
@@ -48,8 +48,8 @@ const customTheme: Theme = Object.freeze({
   },
   colors: {
     ...defaultTheme.colors,
-    white: COLORS.WHITE,
-    black: COLORS.BLACK
+    white: COLOR.WHITE,
+    black: COLOR.BLACK
   },
   components: {
     ...defaultTheme.components,
@@ -58,7 +58,7 @@ const customTheme: Theme = Object.freeze({
       baseStyle: (props: StyleFunctionProps) => ({
         ...defaultTheme.components.Drawer.baseStyle(props),
         dialog: {
-          background: props.colorMode === COLOR_MODE.LIGHT ? COLORS.WHITE : COLORS.BLACK,
+          background: props.colorMode === COLOR_MODE.LIGHT ? COLOR.WHITE : COLOR.BLACK,
           height: 'fit-content'
         }
       }),

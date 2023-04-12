@@ -15,6 +15,22 @@ services:
       - ./server:/usr/src/server
     depends_on:
       - cache
+  client:
+    container_name: client
+    build: ./client
+    ports:
+      - '9091:9091'
+    environment:
+      - PORT=9091
+      - NEXT_PUBLIC_WEBSOCKET_PATH=ws://localhost:9090
+      - NEXT_PUBLIC_SERVER_PATH=http://localhost:9090
+    volumes:
+      # Next.js Hot Refresh fix: https://jameschambers.co.uk/nextjs-hot-reload-docker-development
+      - ./client:/usr/src/client
+      - /usr/src/client/node_modules
+      - /usr/src/client/.next
+    depends_on:
+      - server
   cache:
     container_name: cache
     image: redis:7-alpine3.16
