@@ -19,7 +19,7 @@
 * TypeScript
 * Next.js
 * Chakra UI
-* Heroku
+* Vercel
 
 ### 🌐 Server
 
@@ -42,10 +42,3 @@
 ## Authors
 
 * **AJ Clemente** [areljannC](https://github.com/areljannC)
-
-## Acknowledgments
-
-I learned a lot about WebSockets with this project. I woke up one day with an itch to learn this technology and so I thought,
-"Let's make something today."
-
-Hats off to the thousands of tutorials on YouTube, Medium and everywhere else teaching me about [socket.io](https://socket.io/). I initially made it work with **socket.io** and committed it, then I came across an article saying that it was bloated and outdated. I ended up using [ws](https://github.com/websockets/ws) because it was the *fastest* and *most lightweight* implementation of WebSockets for Node.js.
